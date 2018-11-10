@@ -7,7 +7,7 @@ from mutagen import File
 
 
 app = Flask(__name__)
-
+print(__name__)
 
 def sec2minString(sec):
     mi = sec / 60.0
