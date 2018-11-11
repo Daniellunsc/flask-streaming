@@ -7,6 +7,7 @@ import os
 
 
 def model():
+  print("chamando model")
   connection.ConnectionPool().close_all_instances(action='commit')
   try:
     dbinfo = os.environ['DBSTRING']
