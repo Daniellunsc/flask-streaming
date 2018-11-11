@@ -10,11 +10,9 @@ def model():
   try:
     dbinfo = os.environ['DBSTRING']
     if connection.ConnectionPool().check_active_connection:
-      print("conexao existente, usando ela")
       db = connection.ConnectionPool().reconnect()
       return db
     else:
-      print("conexao nao existente, usando outra")
       connection.ConnectionPool().close_all_instances(action='commit')
       db = DAL(dbinfo,  folder='./database', pool_size=1)
   except FileNotFoundError:

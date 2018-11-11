@@ -19,7 +19,6 @@ def updateMusic():
     db._adapter.reconnect()
     musicList = glob.glob(MUSICFOLDER + '*.mp3')
     musicNames = [mi.split("/")[-1] for mi in musicList]
-    print(musicNames)
     indb = [msi.arquivo for msi in db().iterselect(db.musica.arquivo)
             if msi.arquivo in musicNames]
 
