@@ -22,6 +22,7 @@ app.config.update(
   MAIL_SERVER='smtp.gmail.com',
   MAIL_PORT=587,
   MAIL_USE_SSL=False,
+  #Change email and password to send emails.
   MAIL_USERNAME='myemail@gmail.com',
   MAIL_PASSWORD='mypassword'
 )
