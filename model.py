@@ -7,17 +7,23 @@ import os
 
 
 def model():
-  print("chamando model")
-  connection.ConnectionPool().close_all_instances(action='commit')
   try:
     dbinfo = os.environ['DBSTRING']
-    db = DAL(dbinfo,  folder='./database', pool_size=1)
+    if connection.ConnectionPool().check_active_connection:
+      print("conexao existente, usando ela")
+      db = connection.ConnectionPool().reconnect()
+      return db
+    else:
+      print("conexao nao existente, usando outra")
+      connection.ConnectionPool().close_all_instances(action='commit')
+      db = DAL(dbinfo,  folder='./database', pool_size=1)
   except FileNotFoundError:
     os.mkdir('database')
   except pymysql.err.InternalError:
+    connection.ConnectionPool().close_all_instances(action='commit')
     db = DAL(dbinfo,  folder='./database', pool_size=1, migrate=True)
   finally:
-    db.close()
+    connection.ConnectionPool().close_all_instances(action='commit')
     db = DAL(dbinfo,  folder='./database', pool_size=1, migrate=False)
     table(db)
     return db
