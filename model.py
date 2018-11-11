@@ -5,8 +5,9 @@ from pydal import DAL, Field
 import os
 
 
+
 def model():
-    dbinfo = 'mysql://root:12345678@localhost:3306/flaskstreaming'
+    dbinfo = os.environ['DBSTRING']
     db = DAL(dbinfo,  folder='./database', pool_size=1)
     table(db)
     return db
