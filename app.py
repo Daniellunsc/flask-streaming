@@ -47,6 +47,7 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+  db._adapter.reconnect()
   if flask_login.current_user.is_authenticated:
     return redirect(url_for('home'))
 
@@ -64,6 +65,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    db._adapter.reconnect()
     if request.method == "POST":
         print("entrei")
         name = request.form['username']
