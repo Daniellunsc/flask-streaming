@@ -7,6 +7,8 @@ import os
 
 def model():
     dbinfo = os.environ['DBSTRING']
+    if not os.path.exists('/database'):
+      os.mkdir('database')
     db = DAL(dbinfo,  folder='./database', pool_size=1)
     table(db)
     return db
