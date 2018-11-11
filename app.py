@@ -30,6 +30,7 @@ app.config.update(
 
 mail = Mail(app)
 
+db = model()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -63,7 +64,6 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    db = model()
     if request.method == "POST":
         print("entrei")
         name = request.form['username']

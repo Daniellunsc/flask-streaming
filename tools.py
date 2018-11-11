@@ -13,8 +13,9 @@ from model import model
 
 MUSICFOLDER = 'static/musics/'
 
+db = model()
+
 def updateMusic():
-    db = model()
     musicList = glob.glob(MUSICFOLDER + '*.mp3')
     musicNames = [mi.split("/")[-1] for mi in musicList]
 
@@ -44,7 +45,6 @@ def updateMusic():
 
 
 def get_musics():
-    db = model()
     musicList = db().select(db.musica.arquivo, db.musica.tempo, db.musica.cantor,
                             db.musica.nome, orderby=db.musica.arquivo | db.musica.nome)
 
