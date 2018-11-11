@@ -1,13 +1,45 @@
 from flask import Flask, url_for, render_template, json
 from flask import send_file, request
+import model
 import glob
 
 from io import BytesIO
 from mutagen import File
 
-
 app = Flask(__name__)
-print(__name__)
+
+MUSICFOLDER = 'static/music'
+
+
+def updateMusic():
+    db = model()
+    musicList = glob.glob(MUSICFOLDER + "*.mp3")
+    musicNames = [mi.split("/")[-1] for mi in musicList]
+
+    indb = [msi.arquivo for msi in db().iterselect(db.musica.arquivo)
+            if msi.arquivo in musicNames]
+
+    notindb = list(set(musicNames) - set(indb))
+    for msi in notindb:
+        tag = File(MUSICFOLDER + msi)
+        tempo = sec2minString(tag.info.length)
+        if 'TIT2' in tag.keys():
+            db.musica.insert(nome=tag['TIT2'].text[0],
+                             cantor=tag['TPE1'].text[0],
+                             arquivo=msi,
+                             tempo=tempo
+                             )
+        else:
+            db.musica.insert(arquivo=msi, tempo=tempo)
+
+    notindir = [msi.arquivo for msi in db().iterselect(
+        db.musica.arquivo) if msi.arquivo not in musicNames]
+
+    for msi in notindir:
+        db(db.musica.arquivo == msi).delete()
+
+    db.commit()
+
 
 def sec2minString(sec):
     mi = sec / 60.0
@@ -19,6 +51,7 @@ def sec2minString(sec):
         seci = str(seci)
 
     return mi[0] + ":" + seci
+
 
 @app.route("/sounds")
 def sounds():
@@ -39,14 +72,16 @@ def coverImage():
         strIO.seek(0)
 
         return send_file(strIO,
-                     mimetype="image/jpg")
+                         mimetype="image/jpg")
     else:
         return app.send_static_file('images/noCoverImage.png')
 
+
 @app.after_request
 def add_header(response):
-  response.cache_control.max_age = 0
-  return response
+    response.cache_control.max_age = 0
+    return response
+
 
 @app.route("/")
 def home():
@@ -62,10 +97,12 @@ def home():
     for i in range(len(musicJ)):
         tag = File(musiclist[i])
         if('TIT2' in tag.keys()):
-            musicJ[i]['Tags'] = {'TIT2':tag['TIT2'].text[0], 'TPE1':tag['TPE1'].text[0]}
+            musicJ[i]['Tags'] = {
+                'TIT2': tag['TIT2'].text[0], 'TPE1': tag['TPE1'].text[0]}
 
     return render_template("home.html",
                            musicJ=musicJ)
+
 
 if(__name__ == "__main__"):
     app.run(debug=True)
