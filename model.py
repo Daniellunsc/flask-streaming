@@ -1,12 +1,13 @@
 # -*- Coding: utf-8 -*-
 
 import datetime
-from pydal import DAL, Field, exceptions
+from pydal import DAL, Field, exceptions, connection
 import pymysql
 import os
 
 
 def model():
+  connection.ConnectionPool().close_all_instances(action='commit')
   try:
     dbinfo = os.environ['DBSTRING']
     db = DAL(dbinfo,  folder='./database', pool_size=1)
@@ -15,6 +16,7 @@ def model():
   except pymysql.err.InternalError:
     db = DAL(dbinfo,  folder='./database', pool_size=1, migrate=True)
   finally:
+    db.close()
     db = DAL(dbinfo,  folder='./database', pool_size=1, migrate=False)
     table(db)
     return db

@@ -16,6 +16,7 @@ MUSICFOLDER = 'static/musics/'
 db = model()
 
 def updateMusic():
+    db._adapter.reconnect()
     musicList = glob.glob(MUSICFOLDER + '*.mp3')
     musicNames = [mi.split("/")[-1] for mi in musicList]
 
