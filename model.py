@@ -5,7 +5,6 @@ from pydal import DAL, Field
 import os
 
 
-
 def model():
     dbinfo = os.environ['DBSTRING']
     db = DAL(dbinfo,  folder='./database', pool_size=1)
