@@ -1,2 +1,6 @@
 env/
 .vscode
+
+/database
+__pycache__
+/.vscode

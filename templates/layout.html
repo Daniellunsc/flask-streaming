@@ -25,13 +25,28 @@
     <nav>
         <div class='nav-wrapper blue'>
             <a href="#" data-activates="mobile-nav" class="button-collapse"><i class="material-icons">menu</i></a>
-            <a href="#" class="brand-logo center">FPlayer</a>
+            <a href="#" class="brand-logo center">
+              {% if current_user.is_authenticated %}
+                Olá! {{ current_user.name }}
+              {% else %}
+                Faça Login
+              {% endif %}
+            </a>
             <ul id="nav-mobile" class="left hide-on-med-and-down">
                 <li><a href="{{ url_for("home")}}">Home</a></li>
+                {% if current_user.is_authenticated %}
+                  <li><a href="{{ url_for("logout")}}">Logout</a></li>
+                {% else %}
+                  <li><a href="{{ url_for("login")}}">Login</a></li>
+                {% endif %}
             </ul>
         </div>
         <ul class="side-nav" id="mobile-nav">
-            <li><a href="{{ url_for("home") }}">Home</a></li>
+            {% if current_user.is_authenticated %}
+              <li><a href="{{ url_for("logout")}}">Logout</a></li>
+            {% else %}
+              <li><a href="{{ url_for("login")}}">Login</a></li>
+            {% endif %}
         </ul>
     </nav>
     <div id="content" class="container">
