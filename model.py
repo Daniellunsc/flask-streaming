@@ -1,17 +1,21 @@
 # -*- Coding: utf-8 -*-
 
 import datetime
-from pydal import DAL, Field
+from pydal import DAL, Field, exceptions
+import pymysql
 import os
 
 
 def model():
-    if os.path.isdir('./database') is False:
-      os.mkdir('database')
-    else:
-      pass
+  try:
     dbinfo = os.environ['DBSTRING']
     db = DAL(dbinfo,  folder='./database', pool_size=1)
+  except FileNotFoundError:
+    os.mkdir('database')
+  except pymysql.err.InternalError:
+    db = DAL(dbinfo,  folder='./database', pool_size=1, migrate=True)
+  finally:
+    db = DAL(dbinfo,  folder='./database', pool_size=1, migrate=False)
     table(db)
     return db
 
