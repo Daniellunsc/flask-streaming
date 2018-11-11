@@ -11,14 +11,14 @@ def model():
   connection.ConnectionPool().close_all_instances(action='commit')
   try:
     dbinfo = os.environ['DBSTRING']
-    db = DAL(dbinfo,  folder='./database', pool_size=1)
+    db = DAL(dbinfo,  folder='./database', pool_size=0)
   except FileNotFoundError:
     os.mkdir('database')
   except pymysql.err.InternalError:
-    db = DAL(dbinfo,  folder='./database', pool_size=1, migrate=True)
+    db = DAL(dbinfo,  folder='./database', pool_size=0, migrate=True)
   finally:
     db.close()
-    db = DAL(dbinfo,  folder='./database', pool_size=1, migrate=False)
+    db = DAL(dbinfo,  folder='./database', pool_size=0, migrate=False)
     table(db)
     return db
 

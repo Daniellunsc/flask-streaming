@@ -67,7 +67,6 @@ def login():
 def register():
     db._adapter.reconnect()
     if request.method == "POST":
-        print("entrei")
         name = request.form['username']
         email = request.form['email']
         password = request.form['pw']
