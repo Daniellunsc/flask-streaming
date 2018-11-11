@@ -2,13 +2,12 @@
 
 import datetime
 from pydal import DAL, Field
+import os
 
 
 def model():
-    dbinfo = 'sqlite://storage.sqlite'
-    folder = './database'
-
-    db = DAL(dbinfo, folder=folder, pool_size=1)
+    dbinfo = 'mysql://root:12345678@localhost:3306/flaskstreaming'
+    db = DAL(dbinfo,  folder='./database', pool_size=1)
     table(db)
     return db
 
@@ -28,7 +27,7 @@ def table(db):
                     Field("album", "string"),
                     Field("arquivo", "string"),
                     Field("tempo", "string"),
-                    Field("genero", "list: reference estilos"),
+                    Field("genero", "list:reference genero"),
                     )
 
     db.define_table("preferidas",

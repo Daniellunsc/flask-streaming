@@ -17,21 +17,37 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
 app.config.update(
-  DEBUG=True,
-  #Email Settings
-  MAIL_SERVER='smtp.gmail.com',
-  MAIL_PORT=587,
-  MAIL_USE_SSL=False,
-  #Change email and password to send emails.
-  MAIL_USERNAME='myemail@gmail.com',
-  MAIL_PASSWORD='mypassword'
+    DEBUG=True,
+    # Email Settings
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_SSL=False,
+    # Change email and password to send emails.
+    MAIL_USERNAME='myemail@gmail.com',
+    MAIL_PASSWORD='mypassword'
 )
 
 mail = Mail(app)
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-  return "Bem Vindo"
+    db = model()
+    if request.method == "POST":
+        name = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        query = db(db.user.email == email)
+        if query.isempty() is True:
+            password = sha256_crypt.encrypt(password)
+            db.user.insert(name=name, email=email, password=password)
+            db.commit()
+            return redirect(url_for('login'))
+        else:
+            return render_template('register.html')
+    else:
+        return render_template('register.html')
+
 
 @app.route("/sounds")
 def sounds():

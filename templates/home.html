@@ -19,7 +19,7 @@
     {% if musicJ|length > 0 %}
       <img class="responsive-img"  width="500px" height="500px"
       id="coverImg" src="{{ musicJ[0]['coverURL'] }}" >
-    {% else % }
+    {% else %}
       <img class="responsive-img"  width="500px" height="500px"
         id="coverImg" src="{{ url_for('alternativCoverImage') }}" >
     {% endif %}
