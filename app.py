@@ -1,12 +1,36 @@
-from flask import Flask, url_for, render_template, json
-from flask import send_file, request
-import model
-import glob
+from flask import Flask, url_for, render_template
+from flask import send_file, request, flash, redirect
 
-from io import BytesIO
-from mutagen import File
+import flask_login
+from passlib.hash import sha256_crypt
+from flask_mail import Mail
+import datetime
+
+from tools import *
+from model import model
+from os import urandom
 
 app = Flask(__name__)
+app.secret_key = urandom(24)
+
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
+app.config.update(
+  DEBUG=True,
+  #Email Settings
+  MAIL_SERVER='smtp.gmail.com',
+  MAIL_PORT=587,
+  MAIL_USE_SSL=False,
+  MAIL_USERNAME='myemail@gmail.com',
+  MAIL_PASSWORD='mypassword'
+)
+
+mail = Mail(app)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+  return "Bem Vindo"
 
 @app.route("/sounds")
 def sounds():
