@@ -11,11 +11,11 @@ import glob
 from mutagen import File
 from model import model
 
-MUSICFOLDER = 'static/musics'
+MUSICFOLDER = 'static/musics/'
 
 def updateMusic():
     db = model()
-    musicList = glob.glob(MUSICFOLDER + "*.mp3")
+    musicList = glob.glob(MUSICFOLDER + '*.mp3')
     musicNames = [mi.split("/")[-1] for mi in musicList]
 
     indb = [msi.arquivo for msi in db().iterselect(db.musica.arquivo)
@@ -52,7 +52,7 @@ def get_musics():
         musicJ = [{
             "fileName": mi.arquivo,
             "coverURL": url_for('coverImage', music=MUSICFOLDER + mi.arquivo),
-            "fileURL": url_for('sounds', music=MUSICFOLDER + mi.arquivo),
+            "fileUrl": url_for('sounds', music=MUSICFOLDER + mi.arquivo),
             "length": mi.tempo,
             "Tags": None
         } for mi in musicList]

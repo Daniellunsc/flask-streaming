@@ -5,10 +5,11 @@ import flask_login
 from passlib.hash import sha256_crypt
 from flask_mail import Mail
 import datetime
-
+from io import BytesIO
 from tools import *
 from model import model
 from os import urandom
+from user import User
 
 app = Flask(__name__)
 app.secret_key = urandom(24)
@@ -30,13 +31,44 @@ app.config.update(
 mail = Mail(app)
 
 
+@login_manager.user_loader
+def load_user(user_id):
+  return User.get_user(user_id)
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+  return redirect(url_for('login'))
+
+@app.route('/logout')
+def logout():
+  flask_login.logout_user()
+  return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+  if flask_login.current_user.is_authenticated:
+    return redirect(url_for('home'))
+
+  if request.method == "GET":
+    return render_template('login.html')
+
+  email = request.form['email']
+  password = request.form['pw']
+  user = User(email, password)
+  if user.get_id() is None:
+    return render_template('login.html')
+
+  flask_login.login_user(user)
+  return redirect(url_for('home'))
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     db = model()
     if request.method == "POST":
+        print("entrei")
         name = request.form['username']
         email = request.form['email']
-        password = request.form['password']
+        password = request.form['pw']
         query = db(db.user.email == email)
         if query.isempty() is True:
             password = sha256_crypt.encrypt(password)
@@ -78,13 +110,14 @@ def add_header(response):
     response.cache_control.max_age = 0
     return response
 
-
 @app.route("/")
+@flask_login.login_required
 def home():
     updateMusic()
     musicJ = get_musics()
     return render_template("home.html",
-                           musicJ=musicJ)
+                           musicJ=musicJ,
+                           username=flask_login.current_user.name)
 
 
 if(__name__ == "__main__"):

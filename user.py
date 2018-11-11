@@ -37,6 +37,7 @@ class User(UserMixin):
 
     @classmethod
     def get_user(cls, user_id):
+      db = model()
       query = db(db.user.email == user_id)
       if query.isempty() is True:
         return None
