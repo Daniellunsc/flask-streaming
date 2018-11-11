@@ -91,9 +91,7 @@ def sounds():
 @app.route("/coverImage")
 def coverImage():
     cover = request.args["music"]
-    print(cover)
     cover = File(cover)
-    print(cover.tags.keys())
     if("APIC:Front" in cover.tags.keys()):
         imgcover = cover.tags["APIC:Front"].data
         strIO = BytesIO()
