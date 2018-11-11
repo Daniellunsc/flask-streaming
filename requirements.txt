@@ -1,3 +1,4 @@
+autopep8==1.4.2
 Click==7.0
 Flask==1.0.2
 gunicorn==19.9.0
@@ -5,4 +6,6 @@ itsdangerous==1.1.0
 Jinja2==2.10
 MarkupSafe==1.1.0
 mutagen==1.41.1
+pycodestyle==2.4.0
+pyDAL==17.11
 Werkzeug==0.14.1

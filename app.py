@@ -41,6 +41,32 @@ def updateMusic():
     db.commit()
 
 
+def get_musics():
+    db = model()
+    musicList = db().select(db.musica.arquivo, db.musica.tempo, db.musica.cantor,
+                            db.musica.nome, orderby=db.musica.arquivo | db.musica.nome)
+
+    if len(musicList) > 0:
+        musicJ = [{
+            "fileName": mi.arquivo,
+            "coverURL": url_for('coverImage', music=MUSICFOLDER + mi.arquivo),
+            "fileURL": url_for('sounds', music=MUSICFOLDER + mi.arquivo),
+            "length": mi.tempo,
+            "Tags": None
+        } for mi in musicList]
+
+        for i in range(len(musicJ)):
+            if musicList[i].cantor is not None:
+                musicJ[i]['Tags'] = {
+                    'TIT2': musicList[i].nome,
+                    'TPE1': musicList[i].cantor,
+                }
+    else:
+      musicJ = []
+    return musicJ
+
+
+
 def sec2minString(sec):
     mi = sec / 60.0
     mi = str(mi).split(".")
@@ -85,21 +111,8 @@ def add_header(response):
 
 @app.route("/")
 def home():
-    musiclist = glob.glob("static/musics/*.mp3")
-
-    musicJ = [{"fileName": mi.split("/")[-1],
-               "coverURL": url_for('coverImage', music=mi),
-               'fileUrl':url_for('sounds', music=mi),
-               'length': sec2minString(File(mi).info.length),
-               'Tags': None
-               } for mi in musiclist]
-
-    for i in range(len(musicJ)):
-        tag = File(musiclist[i])
-        if('TIT2' in tag.keys()):
-            musicJ[i]['Tags'] = {
-                'TIT2': tag['TIT2'].text[0], 'TPE1': tag['TPE1'].text[0]}
-
+    updateMusic()
+    musicJ = get_musics()
     return render_template("home.html",
                            musicJ=musicJ)
 
